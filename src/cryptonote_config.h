@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2024, The Monero Project
+// Copyright (c) 2026, Jonathan Bascelli 
 // 
 // All rights reserved.
 // 
@@ -165,12 +165,13 @@
 
 #define RPC_IP_FAILS_BEFORE_BLOCK                       3
 
-#define CRYPTONOTE_NAME                         "bitmonero"
-#define CRYPTONOTE_BLOCKCHAINDATA_FILENAME      "data.mdb"
-#define CRYPTONOTE_BLOCKCHAINDATA_LOCK_FILENAME "lock.mdb"
-#define P2P_NET_DATA_FILENAME                   "p2pstate.bin"
-#define RPC_PAYMENTS_DATA_FILENAME              "rpcpayments.bin"
-#define MINER_CONFIG_FILE_NAME                  "miner_conf.json"
+/* MODIFICATO: Cambiato il nome del network e dei file database per il Bascellicoin */
+#define CRYPTONOTE_NAME                         "bascellicoin"
+#define CRYPTONOTE_BLOCKCHAINDATA_FILENAME      "bascelli_data.mdb"
+#define CRYPTONOTE_BLOCKCHAINDATA_LOCK_FILENAME "bascelli_lock.mdb"
+#define P2P_NET_DATA_FILENAME                   "bascelli_p2pstate.bin"
+#define RPC_PAYMENTS_DATA_FILENAME              "bascelli_rpcpayments.bin"
+#define MINER_CONFIG_FILE_NAME                  "bascelli_miner_conf.json"
 
 #define THREAD_STACK_SIZE                       5 * 1024 * 1024
 
@@ -231,12 +232,16 @@ namespace config
   uint64_t const CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 18;
   uint64_t const CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX = 19;
   uint64_t const CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX = 42;
-  uint16_t const P2P_DEFAULT_PORT = 18080;
-  uint16_t const RPC_DEFAULT_PORT = 18081;
-  uint16_t const ZMQ_RPC_DEFAULT_PORT = 18082;
+  
+  /* MODIFICATO: Impostate le porte esclusive per la rete principale del Bascellicoin */
+  uint16_t const P2P_DEFAULT_PORT = 11337;
+  uint16_t const RPC_DEFAULT_PORT = 11338;
+  uint16_t const ZMQ_RPC_DEFAULT_PORT = 11339;
+  
   boost::uuids::uuid const NETWORK_ID = { {
-      0x12 ,0x30, 0xF1, 0x71 , 0x61, 0x04 , 0x41, 0x61, 0x17, 0x31, 0x00, 0x82, 0x16, 0xA1, 0xA1, 0x10
-    } }; // Bender's nightmare
+      0x42, 0x41, 0x53, 0x43, 0x45, 0x4c, 0x4c, 0x49, 0x43, 0x4f, 0x49, 0x4e, 0x32, 0x30, 0x32, 0x36
+    } }; // Identificativo unico di rete per il Bascellicoin (Hex: BASCELLICOIN2026)
+    
   std::string const GENESIS_TX = "013c01ff0001ffffffffffff03029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd08807121017767aafcde9be00dcfd098715ebcf7f410daebc582fda69d24a28e9d0bc890d1";
   uint32_t const GENESIS_NONCE = 10000;
 
@@ -274,9 +279,12 @@ namespace config
     uint64_t const CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 53;
     uint64_t const CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX = 54;
     uint64_t const CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX = 63;
-    uint16_t const P2P_DEFAULT_PORT = 28080;
-    uint16_t const RPC_DEFAULT_PORT = 28081;
-    uint16_t const ZMQ_RPC_DEFAULT_PORT = 28082;
+    
+    /* MODIFICATO: Spostate anche le porte di Testnet per evitare collisioni */
+    uint16_t const P2P_DEFAULT_PORT = 11347;
+    uint16_t const RPC_DEFAULT_PORT = 11348;
+    uint16_t const ZMQ_RPC_DEFAULT_PORT = 11349;
+    
     boost::uuids::uuid const NETWORK_ID = { {
         0x12 ,0x30, 0xF1, 0x71 , 0x61, 0x04 , 0x41, 0x61, 0x17, 0x31, 0x00, 0x82, 0x16, 0xA1, 0xA1, 0x11
       } }; // Bender's daydream
@@ -289,9 +297,12 @@ namespace config
     uint64_t const CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 24;
     uint64_t const CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX = 25;
     uint64_t const CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX = 36;
-    uint16_t const P2P_DEFAULT_PORT = 38080;
-    uint16_t const RPC_DEFAULT_PORT = 38081;
-    uint16_t const ZMQ_RPC_DEFAULT_PORT = 38082;
+    
+    /* MODIFICATO: Spostate anche le porte di Stagenet per sicurezza */
+    uint16_t const P2P_DEFAULT_PORT = 11357;
+    uint16_t const RPC_DEFAULT_PORT = 11358;
+    uint16_t const ZMQ_RPC_DEFAULT_PORT = 11359;
+    
     boost::uuids::uuid const NETWORK_ID = { {
         0x12 ,0x30, 0xF1, 0x71 , 0x61, 0x04 , 0x41, 0x61, 0x17, 0x31, 0x00, 0x82, 0x16, 0xA1, 0xA1, 0x12
       } }; // Bender's daydream
@@ -338,7 +349,7 @@ namespace cryptonote
     static const config_t testnet = {
       ::config::testnet::CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX,
       ::config::testnet::CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX,
-      ::config::testnet::CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX,
+      ::config::testnet::testnet::CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX,
       ::config::testnet::P2P_DEFAULT_PORT,
       ::config::testnet::RPC_DEFAULT_PORT,
       ::config::testnet::ZMQ_RPC_DEFAULT_PORT,
