@@ -1,4 +1,5 @@
-# Copyright (c) 2014-2024, The Monero Project
+# Copyright (c) 2026, Jonathan Bascelli 
+
 #
 # All rights reserved.
 #
@@ -48,7 +49,7 @@ if (IOS)
     INCLUDE(CmakeLists_IOS.txt)
 endif()
 
-project(monero)
+project(bascellicoin)
 
 option (USE_CCACHE "Use ccache if a usable instance is found" ON)
 if (USE_CCACHE)
