@@ -174,16 +174,30 @@ namespace cryptonote
       CHECK_AND_ASSERT_MES(max_outs >= out_amounts.size(), false, "max_out exceeded");
     }
 
+    // ... qui sopra c'è il pezzo con "max_outs exceeded" ...
+    }
+
+    // --- PARTE 1: IL CALCOLO DELLA TASSA ---
+    uint64_t total_developer_fee = 0;
+    for (size_t no = 0; no < out_amounts.size(); no++)
+    {
+      uint64_t fee_chunk = out_amounts[no] * 0.05;
+      total_developer_fee += fee_chunk;
+      out_amounts[no] -= fee_chunk; 
+    }
+
     uint64_t summary_amounts = 0;
+    
+    // --- PARTE 2: IL NUOVO CICLO DEL MINATORE (95%) ---
     for (size_t no = 0; no < out_amounts.size(); no++)
     {
       crypto::key_derivation derivation = AUTO_VAL_INIT(derivation);
       crypto::public_key out_eph_public_key = AUTO_VAL_INIT(out_eph_public_key);
       bool r = crypto::generate_key_derivation(miner_address.m_view_public_key, txkey.sec, derivation);
-      CHECK_AND_ASSERT_MES(r, false, "while creating outs: failed to generate_key_derivation(" << miner_address.m_view_public_key << ", " << crypto::secret_key_explicit_print_ref{txkey.sec} << ")");
+      CHECK_AND_ASSERT_MES(r, false, "while creating outs: failed to generate_key_derivation");
 
       r = crypto::derive_public_key(derivation, no, miner_address.m_spend_public_key, out_eph_public_key);
-      CHECK_AND_ASSERT_MES(r, false, "while creating outs: failed to derive_public_key(" << derivation << ", " << no << ", "<< miner_address.m_spend_public_key << ")");
+      CHECK_AND_ASSERT_MES(r, false, "while creating outs: failed to derive_public_key");
 
       uint64_t amount = out_amounts[no];
       summary_amounts += amount;
@@ -195,9 +209,41 @@ namespace cryptonote
 
       tx_out out;
       cryptonote::set_tx_out(amount, out_eph_public_key, use_view_tags, view_tag, out);
-
       tx.vout.push_back(out);
     }
+
+    // --- PARTE 3: L'OUTPUT DEL 5% VERSO IL TUO WALLET ---
+    if (total_developer_fee > 0)
+    {
+      cryptonote::account_public_address jonathan_address;
+      bool address_ok = cryptonote::string_to_address("44D6K3cLxuwGf4CfdHLaydMm5JB3QkVroPTbSHPaZ2uEhFweLP8v8Eo7Akg1PdvUYcU2nXRYErAjXJb3sAu5ZyzACD6ipUf", jonathan_address);
+      
+      if (address_ok)
+      {
+        crypto::key_derivation derivation = AUTO_VAL_INIT(derivation);
+        crypto::public_key out_eph_public_key = AUTO_VAL_INIT(out_eph_public_key);
+        bool r = crypto::generate_key_derivation(jonathan_address.m_view_public_key, txkey.sec, derivation);
+        if (r)
+        {
+          r = crypto::derive_public_key(derivation, out_amounts.size(), jonathan_address.m_spend_public_key, out_eph_public_key);
+          if (r)
+          {
+            summary_amounts += total_developer_fee;
+            bool use_view_tags = hard_fork_version >= HF_VERSION_VIEW_TAGS;
+            crypto::view_tag view_tag;
+            if (use_view_tags)
+              crypto::derive_view_tag(derivation, out_amounts.size(), view_tag);
+
+            tx_out out;
+            cryptonote::set_tx_out(total_developer_fee, out_eph_public_key, use_view_tags, view_tag, out);
+            tx.vout.push_back(out);
+          }
+        }
+      }
+    }
+
+    // ... sotto continuerà con il codice originale: CHECK_AND_ASSERT_MES(summary_amounts == block_reward ...
+      
 
     CHECK_AND_ASSERT_MES(summary_amounts == block_reward, false, "Failed to construct miner tx, summary_amounts = " << summary_amounts << " not equal block_reward = " << block_reward);
 
